@@ -42,7 +42,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(item) in products" :key="item.id">
+                    <tr v-for="item in products" :key="item.id">
                         <td>{{ item.category }}</td>
                         <td>{{ item.title }}</td>
                         <td class="text-start">
@@ -55,7 +55,7 @@
                             <span v-if="item.is_enabled" class="text-success">啟用</span>
                             <span v-else>未啟用</span>
                         </td>
-                        <td class="text-center"> 
+                        <td class="text-center">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-outline-primary btn-sm"
                                     @click="openModal('edit', item)">
@@ -70,9 +70,25 @@
                     </tr>
                 </tbody>
             </table>
+            <!-- 分頁元件 -->
+            <!-- props: 內層 pages，外層 pagination -->
+            <!-- emit:  內層 get-product，外層 getData-->
+            <pagination :pages="pagination" @get-product="getData" @pre-page="getData" @next-page="getData">
+            </pagination>
         </div>
-        <!-- Modal -->
-        <div id="productModal" ref="productModal" class="modal fade" tabindex="-1" aria-labelledby="productModalLabel"
+
+        <!-- 產品元件 -->
+        <!-- props: 內層 temp-product，外層 tempProduct -->
+        <!-- emit:  內層 get-data，外層 getData-->
+        <product-modal ref="productModalDom" :temp-product="tempProduct" :is-new="isNew" @update="getData"></product-modal>
+
+        <!-- 刪除的 modal -->
+        <del-modal ref="delModalDom" :temp-product="tempProduct" @update="getData"></del-modal>
+    </div>
+
+    <!-- 產品元件 template  -->
+    <script type="text/x-template" id="templateForProductModal">
+        <div id="productModal" class="modal fade" tabindex="-1" aria-labelledby="productModalLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content border-0">
@@ -197,8 +213,10 @@
                 </div>
             </div>
         </div>
-        <!-- 刪除的 modal -->
-        <div id="delProductModal" ref="delProductModal" class="modal fade" tabindex="-1"
+    </script>
+    <!-- 刪除產品元件 template -->
+    <script type="text/x-template" id="templateForDelete">
+        <div id="delProductModal" class="modal fade" tabindex="-1"
             aria-labelledby="delProductModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content border-0">
@@ -224,9 +242,7 @@
                 </div>
             </div>
         </div>
-        <!-- Modal -->
-    </div>
-
+    </script>
     <!-- 引入 axios -->
     <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.9.1/axios.min.js'
         integrity='sha512-Xk3wWei2TGrsh9kDSBKUMIjw/86sLUvhtnv9f7fOuIwhhiUTKz8szkWkzHthrM5Bb3Bu9idSzkxOrkzhcneuiw=='
